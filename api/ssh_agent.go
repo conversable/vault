@@ -198,7 +198,7 @@ func (c *Client) SSHHelperWithMountPoint(mountPoint string) *SSHHelper {
 // OTP matches the echo request message, instead of searching an entry for the OTP,
 // an echo response message is returned. This feature is used by ssh-helper to verify if
 // its configured correctly.
-func (c *SSHHelper) Verify(otp string) (*SSHVerifyResponse, error) {
+func (c *SSHHelper) Verify(ctx context.Context, otp string) (*SSHVerifyResponse, error) {
 	data := map[string]interface{}{
 		"otp": otp,
 	}
@@ -208,7 +208,7 @@ func (c *SSHHelper) Verify(otp string) (*SSHVerifyResponse, error) {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

@@ -2,10 +2,10 @@ package api
 
 import "context"
 
-func (c *Sys) InitStatus() (bool, error) {
+func (c *Sys) InitStatus(ctx context.Context) (bool, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/init")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -18,13 +18,13 @@ func (c *Sys) InitStatus() (bool, error) {
 	return result.Initialized, err
 }
 
-func (c *Sys) Init(opts *InitRequest) (*InitResponse, error) {
+func (c *Sys) Init(ctx context.Context, opts *InitRequest) (*InitResponse, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/init")
 	if err := r.SetJSONBody(opts); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

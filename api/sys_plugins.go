@@ -30,7 +30,7 @@ type ListPluginsResponse struct {
 
 // ListPlugins lists all plugins in the catalog and returns their names as a
 // list of strings.
-func (c *Sys) ListPlugins(i *ListPluginsInput) (*ListPluginsResponse, error) {
+func (c *Sys) ListPlugins(ctx context.Context, i *ListPluginsInput) (*ListPluginsResponse, error) {
 	path := ""
 	method := ""
 	if i.Type == consts.PluginTypeUnknown {
@@ -49,7 +49,7 @@ func (c *Sys) ListPlugins(i *ListPluginsInput) (*ListPluginsResponse, error) {
 		req.Params.Set("list", "true")
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, req)
 	if err != nil && resp == nil {
@@ -143,11 +143,11 @@ type GetPluginResponse struct {
 }
 
 // GetPlugin retrieves information about the plugin.
-func (c *Sys) GetPlugin(i *GetPluginInput) (*GetPluginResponse, error) {
+func (c *Sys) GetPlugin(ctx context.Context, i *GetPluginInput) (*GetPluginResponse, error) {
 	path := catalogPathByType(i.Type, i.Name)
 	req := c.c.NewRequest(http.MethodGet, path)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, req)
 	if err != nil {
@@ -184,7 +184,7 @@ type RegisterPluginInput struct {
 }
 
 // RegisterPlugin registers the plugin with the given information.
-func (c *Sys) RegisterPlugin(i *RegisterPluginInput) error {
+func (c *Sys) RegisterPlugin(ctx context.Context, i *RegisterPluginInput) error {
 	path := catalogPathByType(i.Type, i.Name)
 	req := c.c.NewRequest(http.MethodPut, path)
 
@@ -192,7 +192,7 @@ func (c *Sys) RegisterPlugin(i *RegisterPluginInput) error {
 		return err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, req)
 	if err == nil {
@@ -212,11 +212,11 @@ type DeregisterPluginInput struct {
 
 // DeregisterPlugin removes the plugin with the given name from the plugin
 // catalog.
-func (c *Sys) DeregisterPlugin(i *DeregisterPluginInput) error {
+func (c *Sys) DeregisterPlugin(ctx context.Context, i *DeregisterPluginInput) error {
 	path := catalogPathByType(i.Type, i.Name)
 	req := c.c.NewRequest(http.MethodDelete, path)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, req)
 	if err == nil {

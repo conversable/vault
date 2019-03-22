@@ -2,7 +2,7 @@ package api
 
 import "context"
 
-func (c *Sys) Health() (*HealthResponse, error) {
+func (c *Sys) Health(ctx context.Context) (*HealthResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/health")
 	// If the code is 400 or above it will automatically turn into an error,
 	// but the sys/health API defaults to returning 5xx when not sealed or
@@ -13,7 +13,7 @@ func (c *Sys) Health() (*HealthResponse, error) {
 	r.Params.Add("drsecondarycode", "299")
 	r.Params.Add("performancestandbycode", "299")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

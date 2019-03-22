@@ -8,10 +8,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (c *Sys) ListAuth() (map[string]*AuthMount, error) {
+func (c *Sys) ListAuth(ctx context.Context) (map[string]*AuthMount, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/auth")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -37,20 +37,20 @@ func (c *Sys) ListAuth() (map[string]*AuthMount, error) {
 }
 
 // DEPRECATED: Use EnableAuthWithOptions instead
-func (c *Sys) EnableAuth(path, authType, desc string) error {
-	return c.EnableAuthWithOptions(path, &EnableAuthOptions{
+func (c *Sys) EnableAuth(ctx context.Context, path, authType, desc string) error {
+	return c.EnableAuthWithOptions(ctx, path, &EnableAuthOptions{
 		Type:        authType,
 		Description: desc,
 	})
 }
 
-func (c *Sys) EnableAuthWithOptions(path string, options *EnableAuthOptions) error {
+func (c *Sys) EnableAuthWithOptions(ctx context.Context, path string, options *EnableAuthOptions) error {
 	r := c.c.NewRequest("POST", fmt.Sprintf("/v1/sys/auth/%s", path))
 	if err := r.SetJSONBody(options); err != nil {
 		return err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -61,10 +61,10 @@ func (c *Sys) EnableAuthWithOptions(path string, options *EnableAuthOptions) err
 	return nil
 }
 
-func (c *Sys) DisableAuth(path string) error {
+func (c *Sys) DisableAuth(ctx context.Context, path string) error {
 	r := c.c.NewRequest("DELETE", fmt.Sprintf("/v1/sys/auth/%s", path))
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {

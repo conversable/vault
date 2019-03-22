@@ -2,10 +2,10 @@ package api
 
 import "context"
 
-func (c *Sys) Leader() (*LeaderResponse, error) {
+func (c *Sys) Leader(ctx context.Context) (*LeaderResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/leader")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

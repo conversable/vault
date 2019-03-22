@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"errors"
 	"math/rand"
 	"sync"
@@ -153,19 +154,19 @@ func (r *Renewer) Stop() {
 // Renew starts a background process for renewing this secret. When the secret
 // has auth data, this attempts to renew the auth (token). When the secret has
 // a lease, this attempts to renew the lease.
-func (r *Renewer) Renew() {
+func (r *Renewer) Renew(ctx context.Context) {
 	var result error
 	if r.secret.Auth != nil {
-		result = r.renewAuth()
+		result = r.renewAuth(ctx)
 	} else {
-		result = r.renewLease()
+		result = r.renewLease(ctx)
 	}
 
 	r.doneCh <- result
 }
 
 // renewAuth is a helper for renewing authentication.
-func (r *Renewer) renewAuth() error {
+func (r *Renewer) renewAuth(ctx context.Context) error {
 	if !r.secret.Auth.Renewable || r.secret.Auth.ClientToken == "" {
 		return ErrRenewerNotRenewable
 	}
@@ -184,7 +185,7 @@ func (r *Renewer) renewAuth() error {
 		}
 
 		// Renew the auth.
-		renewal, err := client.Auth().Token().RenewTokenAsSelf(token, r.increment)
+		renewal, err := client.Auth().Token().RenewTokenAsSelf(ctx, token, r.increment)
 		if err != nil {
 			return err
 		}
@@ -240,7 +241,7 @@ func (r *Renewer) renewAuth() error {
 }
 
 // renewLease is a helper for renewing a lease.
-func (r *Renewer) renewLease() error {
+func (r *Renewer) renewLease(ctx context.Context) error {
 	if !r.secret.Renewable || r.secret.LeaseID == "" {
 		return ErrRenewerNotRenewable
 	}
@@ -259,7 +260,7 @@ func (r *Renewer) renewLease() error {
 		}
 
 		// Renew the lease.
-		renewal, err := client.Sys().Renew(leaseID, r.increment)
+		renewal, err := client.Sys().Renew(ctx, leaseID, r.increment)
 		if err != nil {
 			return err
 		}

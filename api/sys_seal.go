@@ -2,15 +2,15 @@ package api
 
 import "context"
 
-func (c *Sys) SealStatus() (*SealStatusResponse, error) {
+func (c *Sys) SealStatus(ctx context.Context) (*SealStatusResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/seal-status")
-	return sealStatusRequest(c, r)
+	return sealStatusRequest(ctx, c, r)
 }
 
-func (c *Sys) Seal() error {
+func (c *Sys) Seal(ctx context.Context) error {
 	r := c.c.NewRequest("PUT", "/v1/sys/seal")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -19,7 +19,7 @@ func (c *Sys) Seal() error {
 	return err
 }
 
-func (c *Sys) ResetUnsealProcess() (*SealStatusResponse, error) {
+func (c *Sys) ResetUnsealProcess(ctx context.Context) (*SealStatusResponse, error) {
 	body := map[string]interface{}{"reset": true}
 
 	r := c.c.NewRequest("PUT", "/v1/sys/unseal")
@@ -27,10 +27,10 @@ func (c *Sys) ResetUnsealProcess() (*SealStatusResponse, error) {
 		return nil, err
 	}
 
-	return sealStatusRequest(c, r)
+	return sealStatusRequest(ctx, c, r)
 }
 
-func (c *Sys) Unseal(shard string) (*SealStatusResponse, error) {
+func (c *Sys) Unseal(ctx context.Context, shard string) (*SealStatusResponse, error) {
 	body := map[string]interface{}{"key": shard}
 
 	r := c.c.NewRequest("PUT", "/v1/sys/unseal")
@@ -38,20 +38,20 @@ func (c *Sys) Unseal(shard string) (*SealStatusResponse, error) {
 		return nil, err
 	}
 
-	return sealStatusRequest(c, r)
+	return sealStatusRequest(ctx, c, r)
 }
 
-func (c *Sys) UnsealWithOptions(opts *UnsealOpts) (*SealStatusResponse, error) {
+func (c *Sys) UnsealWithOptions(ctx context.Context, opts *UnsealOpts) (*SealStatusResponse, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/unseal")
 	if err := r.SetJSONBody(opts); err != nil {
 		return nil, err
 	}
 
-	return sealStatusRequest(c, r)
+	return sealStatusRequest(ctx, c, r)
 }
 
-func sealStatusRequest(c *Sys, r *Request) (*SealStatusResponse, error) {
-	ctx, cancelFunc := context.WithCancel(context.Background())
+func sealStatusRequest(ctx context.Context, c *Sys, r *Request) (*SealStatusResponse, error) {
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

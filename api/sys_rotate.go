@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func (c *Sys) Rotate() error {
+func (c *Sys) Rotate(ctx context.Context) error {
 	r := c.c.NewRequest("POST", "/v1/sys/rotate")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -19,10 +19,10 @@ func (c *Sys) Rotate() error {
 	return err
 }
 
-func (c *Sys) KeyStatus() (*KeyStatus, error) {
+func (c *Sys) KeyStatus(ctx context.Context) (*KeyStatus, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/key-status")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
