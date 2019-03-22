@@ -7,10 +7,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (c *Sys) RekeyStatus() (*RekeyStatusResponse, error) {
+func (c *Sys) RekeyStatus(ctx context.Context) (*RekeyStatusResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey/init")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -23,10 +23,10 @@ func (c *Sys) RekeyStatus() (*RekeyStatusResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) RekeyRecoveryKeyStatus() (*RekeyStatusResponse, error) {
+func (c *Sys) RekeyRecoveryKeyStatus(ctx context.Context) (*RekeyStatusResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey-recovery-key/init")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -39,10 +39,10 @@ func (c *Sys) RekeyRecoveryKeyStatus() (*RekeyStatusResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) RekeyVerificationStatus() (*RekeyVerificationStatusResponse, error) {
+func (c *Sys) RekeyVerificationStatus(ctx context.Context) (*RekeyVerificationStatusResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey/verify")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -55,10 +55,10 @@ func (c *Sys) RekeyVerificationStatus() (*RekeyVerificationStatusResponse, error
 	return &result, err
 }
 
-func (c *Sys) RekeyRecoveryKeyVerificationStatus() (*RekeyVerificationStatusResponse, error) {
+func (c *Sys) RekeyRecoveryKeyVerificationStatus(ctx context.Context) (*RekeyVerificationStatusResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey-recovery-key/verify")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -71,13 +71,13 @@ func (c *Sys) RekeyRecoveryKeyVerificationStatus() (*RekeyVerificationStatusResp
 	return &result, err
 }
 
-func (c *Sys) RekeyInit(config *RekeyInitRequest) (*RekeyStatusResponse, error) {
+func (c *Sys) RekeyInit(ctx context.Context, config *RekeyInitRequest) (*RekeyStatusResponse, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/rekey/init")
 	if err := r.SetJSONBody(config); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -90,13 +90,13 @@ func (c *Sys) RekeyInit(config *RekeyInitRequest) (*RekeyStatusResponse, error) 
 	return &result, err
 }
 
-func (c *Sys) RekeyRecoveryKeyInit(config *RekeyInitRequest) (*RekeyStatusResponse, error) {
+func (c *Sys) RekeyRecoveryKeyInit(ctx context.Context, config *RekeyInitRequest) (*RekeyStatusResponse, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/rekey-recovery-key/init")
 	if err := r.SetJSONBody(config); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -109,10 +109,10 @@ func (c *Sys) RekeyRecoveryKeyInit(config *RekeyInitRequest) (*RekeyStatusRespon
 	return &result, err
 }
 
-func (c *Sys) RekeyCancel() error {
+func (c *Sys) RekeyCancel(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey/init")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -121,10 +121,10 @@ func (c *Sys) RekeyCancel() error {
 	return err
 }
 
-func (c *Sys) RekeyRecoveryKeyCancel() error {
+func (c *Sys) RekeyRecoveryKeyCancel(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey-recovery-key/init")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -133,10 +133,10 @@ func (c *Sys) RekeyRecoveryKeyCancel() error {
 	return err
 }
 
-func (c *Sys) RekeyVerificationCancel() error {
+func (c *Sys) RekeyVerificationCancel(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey/verify")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -145,10 +145,10 @@ func (c *Sys) RekeyVerificationCancel() error {
 	return err
 }
 
-func (c *Sys) RekeyRecoveryKeyVerificationCancel() error {
+func (c *Sys) RekeyRecoveryKeyVerificationCancel(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey-recovery-key/verify")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -157,7 +157,7 @@ func (c *Sys) RekeyRecoveryKeyVerificationCancel() error {
 	return err
 }
 
-func (c *Sys) RekeyUpdate(shard, nonce string) (*RekeyUpdateResponse, error) {
+func (c *Sys) RekeyUpdate(ctx context.Context, shard, nonce string) (*RekeyUpdateResponse, error) {
 	body := map[string]interface{}{
 		"key":   shard,
 		"nonce": nonce,
@@ -168,7 +168,7 @@ func (c *Sys) RekeyUpdate(shard, nonce string) (*RekeyUpdateResponse, error) {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -181,7 +181,7 @@ func (c *Sys) RekeyUpdate(shard, nonce string) (*RekeyUpdateResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) RekeyRecoveryKeyUpdate(shard, nonce string) (*RekeyUpdateResponse, error) {
+func (c *Sys) RekeyRecoveryKeyUpdate(ctx context.Context, shard, nonce string) (*RekeyUpdateResponse, error) {
 	body := map[string]interface{}{
 		"key":   shard,
 		"nonce": nonce,
@@ -192,7 +192,7 @@ func (c *Sys) RekeyRecoveryKeyUpdate(shard, nonce string) (*RekeyUpdateResponse,
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -205,10 +205,10 @@ func (c *Sys) RekeyRecoveryKeyUpdate(shard, nonce string) (*RekeyUpdateResponse,
 	return &result, err
 }
 
-func (c *Sys) RekeyRetrieveBackup() (*RekeyRetrieveResponse, error) {
+func (c *Sys) RekeyRetrieveBackup(ctx context.Context) (*RekeyRetrieveResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey/backup")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -233,10 +233,10 @@ func (c *Sys) RekeyRetrieveBackup() (*RekeyRetrieveResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) RekeyRetrieveRecoveryBackup() (*RekeyRetrieveResponse, error) {
+func (c *Sys) RekeyRetrieveRecoveryBackup(ctx context.Context) (*RekeyRetrieveResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/rekey/recovery-backup")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -261,10 +261,10 @@ func (c *Sys) RekeyRetrieveRecoveryBackup() (*RekeyRetrieveResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) RekeyDeleteBackup() error {
+func (c *Sys) RekeyDeleteBackup(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey/backup")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -274,10 +274,10 @@ func (c *Sys) RekeyDeleteBackup() error {
 	return err
 }
 
-func (c *Sys) RekeyDeleteRecoveryBackup() error {
+func (c *Sys) RekeyDeleteRecoveryBackup(ctx context.Context) error {
 	r := c.c.NewRequest("DELETE", "/v1/sys/rekey/recovery-backup")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -287,7 +287,7 @@ func (c *Sys) RekeyDeleteRecoveryBackup() error {
 	return err
 }
 
-func (c *Sys) RekeyVerificationUpdate(shard, nonce string) (*RekeyVerificationUpdateResponse, error) {
+func (c *Sys) RekeyVerificationUpdate(ctx context.Context, shard, nonce string) (*RekeyVerificationUpdateResponse, error) {
 	body := map[string]interface{}{
 		"key":   shard,
 		"nonce": nonce,
@@ -298,7 +298,7 @@ func (c *Sys) RekeyVerificationUpdate(shard, nonce string) (*RekeyVerificationUp
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -311,7 +311,7 @@ func (c *Sys) RekeyVerificationUpdate(shard, nonce string) (*RekeyVerificationUp
 	return &result, err
 }
 
-func (c *Sys) RekeyRecoveryKeyVerificationUpdate(shard, nonce string) (*RekeyVerificationUpdateResponse, error) {
+func (c *Sys) RekeyRecoveryKeyVerificationUpdate(ctx context.Context, shard, nonce string) (*RekeyVerificationUpdateResponse, error) {
 	body := map[string]interface{}{
 		"key":   shard,
 		"nonce": nonce,
@@ -322,7 +322,7 @@ func (c *Sys) RekeyRecoveryKeyVerificationUpdate(shard, nonce string) (*RekeyVer
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

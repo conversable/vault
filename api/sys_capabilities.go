@@ -8,11 +8,11 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (c *Sys) CapabilitiesSelf(path string) ([]string, error) {
-	return c.Capabilities(c.c.Token(), path)
+func (c *Sys) CapabilitiesSelf(ctx context.Context, path string) ([]string, error) {
+	return c.Capabilities(ctx, c.c.Token(), path)
 }
 
-func (c *Sys) Capabilities(token, path string) ([]string, error) {
+func (c *Sys) Capabilities(ctx context.Context, token, path string) ([]string, error) {
 	body := map[string]string{
 		"token": token,
 		"path":  path,
@@ -28,7 +28,7 @@ func (c *Sys) Capabilities(token, path string) ([]string, error) {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

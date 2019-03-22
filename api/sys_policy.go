@@ -8,14 +8,14 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (c *Sys) ListPolicies() ([]string, error) {
+func (c *Sys) ListPolicies(ctx context.Context) ([]string, error) {
 	r := c.c.NewRequest("LIST", "/v1/sys/policies/acl")
 	// Set this for broader compatibility, but we use LIST above to be able to
 	// handle the wrapping lookup function
 	r.Method = "GET"
 	r.Params.Set("list", "true")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -40,10 +40,10 @@ func (c *Sys) ListPolicies() ([]string, error) {
 	return result, err
 }
 
-func (c *Sys) GetPolicy(name string) (string, error) {
+func (c *Sys) GetPolicy(ctx context.Context, name string) (string, error) {
 	r := c.c.NewRequest("GET", fmt.Sprintf("/v1/sys/policies/acl/%s", name))
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -71,7 +71,7 @@ func (c *Sys) GetPolicy(name string) (string, error) {
 	return "", fmt.Errorf("no policy found in response")
 }
 
-func (c *Sys) PutPolicy(name, rules string) error {
+func (c *Sys) PutPolicy(ctx context.Context, name, rules string) error {
 	body := map[string]string{
 		"policy": rules,
 	}
@@ -81,7 +81,7 @@ func (c *Sys) PutPolicy(name, rules string) error {
 		return err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -92,10 +92,10 @@ func (c *Sys) PutPolicy(name, rules string) error {
 	return nil
 }
 
-func (c *Sys) DeletePolicy(name string) error {
+func (c *Sys) DeletePolicy(ctx context.Context, name string) error {
 	r := c.c.NewRequest("DELETE", fmt.Sprintf("/v1/sys/policies/acl/%s", name))
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {

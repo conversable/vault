@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-func (c *Sys) Renew(id string, increment int) (*Secret, error) {
+func (c *Sys) Renew(ctx context.Context, id string, increment int) (*Secret, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/leases/renew")
 
 	body := map[string]interface{}{
@@ -16,7 +16,7 @@ func (c *Sys) Renew(id string, increment int) (*Secret, error) {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -27,10 +27,10 @@ func (c *Sys) Renew(id string, increment int) (*Secret, error) {
 	return ParseSecret(resp.Body)
 }
 
-func (c *Sys) Revoke(id string) error {
+func (c *Sys) Revoke(ctx context.Context, id string) error {
 	r := c.c.NewRequest("PUT", "/v1/sys/leases/revoke/"+id)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -39,10 +39,10 @@ func (c *Sys) Revoke(id string) error {
 	return err
 }
 
-func (c *Sys) RevokePrefix(id string) error {
+func (c *Sys) RevokePrefix(ctx context.Context, id string) error {
 	r := c.c.NewRequest("PUT", "/v1/sys/leases/revoke-prefix/"+id)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -51,10 +51,10 @@ func (c *Sys) RevokePrefix(id string) error {
 	return err
 }
 
-func (c *Sys) RevokeForce(id string) error {
+func (c *Sys) RevokeForce(ctx context.Context, id string) error {
 	r := c.c.NewRequest("PUT", "/v1/sys/leases/revoke-force/"+id)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {
@@ -63,7 +63,7 @@ func (c *Sys) RevokeForce(id string) error {
 	return err
 }
 
-func (c *Sys) RevokeWithOptions(opts *RevokeOptions) error {
+func (c *Sys) RevokeWithOptions(ctx context.Context, opts *RevokeOptions) error {
 	if opts == nil {
 		return errors.New("nil options provided")
 	}
@@ -88,7 +88,7 @@ func (c *Sys) RevokeWithOptions(opts *RevokeOptions) error {
 		}
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err == nil {

@@ -7,10 +7,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func (c *Sys) CORSStatus() (*CORSResponse, error) {
+func (c *Sys) CORSStatus(ctx context.Context) (*CORSResponse, error) {
 	r := c.c.NewRequest("GET", "/v1/sys/config/cors")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -35,13 +35,13 @@ func (c *Sys) CORSStatus() (*CORSResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) ConfigureCORS(req *CORSRequest) (*CORSResponse, error) {
+func (c *Sys) ConfigureCORS(ctx context.Context, req *CORSRequest) (*CORSResponse, error) {
 	r := c.c.NewRequest("PUT", "/v1/sys/config/cors")
 	if err := r.SetJSONBody(req); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -66,10 +66,10 @@ func (c *Sys) ConfigureCORS(req *CORSRequest) (*CORSResponse, error) {
 	return &result, err
 }
 
-func (c *Sys) DisableCORS() (*CORSResponse, error) {
+func (c *Sys) DisableCORS(ctx context.Context) (*CORSResponse, error) {
 	r := c.c.NewRequest("DELETE", "/v1/sys/config/cors")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

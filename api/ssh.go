@@ -25,13 +25,13 @@ func (c *Client) SSHWithMountPoint(mountPoint string) *SSH {
 }
 
 // Credential invokes the SSH backend API to create a credential to establish an SSH session.
-func (c *SSH) Credential(role string, data map[string]interface{}) (*Secret, error) {
+func (c *SSH) Credential(ctx context.Context, role string, data map[string]interface{}) (*Secret, error) {
 	r := c.c.NewRequest("PUT", fmt.Sprintf("/v1/%s/creds/%s", c.MountPoint, role))
 	if err := r.SetJSONBody(data); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {
@@ -44,13 +44,13 @@ func (c *SSH) Credential(role string, data map[string]interface{}) (*Secret, err
 
 // SignKey signs the given public key and returns a signed public key to pass
 // along with the SSH request.
-func (c *SSH) SignKey(role string, data map[string]interface{}) (*Secret, error) {
+func (c *SSH) SignKey(ctx context.Context, role string, data map[string]interface{}) (*Secret, error) {
 	r := c.c.NewRequest("PUT", fmt.Sprintf("/v1/%s/sign/%s", c.MountPoint, role))
 	if err := r.SetJSONBody(data); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if err != nil {

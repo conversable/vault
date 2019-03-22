@@ -46,11 +46,11 @@ func (c *Client) Logical() *Logical {
 	return &Logical{c: c}
 }
 
-func (c *Logical) Read(path string) (*Secret, error) {
-	return c.ReadWithData(path, nil)
+func (c *Logical) Read(ctx context.Context, path string) (*Secret, error) {
+	return c.ReadWithData(ctx, path, nil)
 }
 
-func (c *Logical) ReadWithData(path string, data map[string][]string) (*Secret, error) {
+func (c *Logical) ReadWithData(ctx context.Context, path string, data map[string][]string) (*Secret, error) {
 	r := c.c.NewRequest("GET", "/v1/"+path)
 
 	var values url.Values
@@ -67,7 +67,7 @@ func (c *Logical) ReadWithData(path string, data map[string][]string) (*Secret, 
 		r.Params = values
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -94,14 +94,14 @@ func (c *Logical) ReadWithData(path string, data map[string][]string) (*Secret, 
 	return ParseSecret(resp.Body)
 }
 
-func (c *Logical) List(path string) (*Secret, error) {
+func (c *Logical) List(ctx context.Context, path string) (*Secret, error) {
 	r := c.c.NewRequest("LIST", "/v1/"+path)
 	// Set this for broader compatibility, but we use LIST above to be able to
 	// handle the wrapping lookup function
 	r.Method = "GET"
 	r.Params.Set("list", "true")
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -128,13 +128,13 @@ func (c *Logical) List(path string) (*Secret, error) {
 	return ParseSecret(resp.Body)
 }
 
-func (c *Logical) Write(path string, data map[string]interface{}) (*Secret, error) {
+func (c *Logical) Write(ctx context.Context, path string, data map[string]interface{}) (*Secret, error) {
 	r := c.c.NewRequest("PUT", "/v1/"+path)
 	if err := r.SetJSONBody(data); err != nil {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -160,10 +160,10 @@ func (c *Logical) Write(path string, data map[string]interface{}) (*Secret, erro
 	return ParseSecret(resp.Body)
 }
 
-func (c *Logical) Delete(path string) (*Secret, error) {
+func (c *Logical) Delete(ctx context.Context, path string) (*Secret, error) {
 	r := c.c.NewRequest("DELETE", "/v1/"+path)
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -189,7 +189,7 @@ func (c *Logical) Delete(path string) (*Secret, error) {
 	return ParseSecret(resp.Body)
 }
 
-func (c *Logical) Unwrap(wrappingToken string) (*Secret, error) {
+func (c *Logical) Unwrap(ctx context.Context, wrappingToken string) (*Secret, error) {
 	var data map[string]interface{}
 	if wrappingToken != "" {
 		if c.c.Token() == "" {
@@ -206,7 +206,7 @@ func (c *Logical) Unwrap(wrappingToken string) (*Secret, error) {
 		return nil, err
 	}
 
-	ctx, cancelFunc := context.WithCancel(context.Background())
+	ctx, cancelFunc := context.WithCancel(ctx)
 	defer cancelFunc()
 	resp, err := c.c.RawRequestWithContext(ctx, r)
 	if resp != nil {
@@ -243,7 +243,7 @@ func (c *Logical) Unwrap(wrappingToken string) (*Secret, error) {
 		c.c.SetToken(wrappingToken)
 	}
 
-	secret, err = c.Read(wrappedResponseLocation)
+	secret, err = c.Read(ctx, wrappedResponseLocation)
 	if err != nil {
 		return nil, errwrap.Wrapf(fmt.Sprintf("error reading %q: {{err}}", wrappedResponseLocation), err)
 	}
